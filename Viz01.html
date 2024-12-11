@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Echo Metrics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #444;
+            margin-bottom: 15px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .section-header {
+            text-align: center;
+            color: #666;
+            margin: 40px 0 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Comprehensive Echo Procedure Analytics Dashboard</h1>
+
+        <!-- Primary Metrics Section -->
+        <div class="chart-grid">
+            <div class="chart-container">
+                <h2>Procedure Types Distribution</h2>
+                <canvas id="procedureTypes"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Diagnosis Distribution</h2>
+                <canvas id="diagnosisTypes"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Procedure Duration Distribution</h2>
+                <canvas id="procedureDuration"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Patient Wait Time Distribution</h2>
+                <canvas id="waitTimes"></canvas>
+            </div>
+        </div>
+
+        <!-- Advanced Metrics Section -->
+        <h3 class="section-header">Advanced Analytics</h3>
+        <div class="chart-grid">
+            <div class="chart-container">
+                <h2>Sonographer Workload</h2>
+                <canvas id="sonographerWorkload"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Procedure Time Distribution</h2>
+                <canvas id="timeDistribution"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Patient Location Distribution</h2>
+                <canvas id="patientLocation"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Sedation Usage</h2>
+                <canvas id="sedationStats"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Primary Metrics Charts
+        new Chart(document.getElementById('procedureTypes'), {
+            type: 'pie',
+            data: {
+                labels: ['Initial', 'Follow-up'],
+                datasets: [{
+                    data: [60, 40],
+                    backgroundColor: ['#FF6384', '#36A2EB']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Procedure Types'
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('diagnosisTypes'), {
+            type: 'pie',
+            data: {
+                labels: ['CHD', 'Functional', 'None'],
+                datasets: [{
+                    data: [35, 45, 20],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Diagnosis Types'
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('procedureDuration'), {
+            type: 'bar',
+            data: {
+                labels: ['0-30 min', '31-60 min', '61-90 min', '90+ min'],
+                datasets: [{
+                    label: 'Number of Procedures',
+                    data: [30, 45, 15, 10],
+                    backgroundColor: '#36A2EB'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('waitTimes'), {
+            type: 'bar',
+            data: {
+                labels: ['0-15 min', '16-30 min', '31-60 min', '60+ min'],
+                datasets: [{
+                    label: 'Number of Patients',
+                    data: [40, 30, 20, 10],
+                    backgroundColor: '#FF6384'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Advanced Metrics Charts
+        new Chart(document.getElementById('sonographerWorkload'), {
+            type: 'bar',
+            data: {
+                labels: ['Fatima Moin', 'Urooj Fatima', 'Bakhtawar Javed', 'Shah Boota', 'Fatima Farooqui', 'Shahid Zaman'],
+                datasets: [{
+                    label: 'Number of Procedures',
+                    data: [25, 30, 20, 28, 15, 12],
+                    backgroundColor: [
+                        '#8884d8', '#82ca9d', '#ffc658', 
+                        '#ff7300', '#0088FE', '#00C49F'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('timeDistribution'), {
+            type: 'line',
+            data: {
+                labels: ['8:00-10:00', '10:00-12:00', '12:00-14:00', '14:00-16:00', '16:00-18:00'],
+                datasets: [{
+                    label: 'Number of Procedures',
+                    data: [15, 25, 30, 20, 10],
+                    fill: false,
+                    borderColor: '#8884d8',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        new Chart(document.getElementById('patientLocation'), {
+            type: 'pie',
+            data: {
+                labels: ['Outpatient', 'Inpatient'],
+                datasets: [{
+                    data: [75, 25],
+                    backgroundColor: ['#82ca9d', '#8884d8']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        new Chart(document.getElementById('sedationStats'), {
+            type: 'pie',
+            data: {
+                labels: ['With Sedation', 'Without Sedation'],
+                datasets: [{
+                    data: [30, 70],
+                    backgroundColor: ['#ffc658', '#ff7300']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>
