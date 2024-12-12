@@ -47,17 +47,39 @@
             border-radius: 8px;  
             background-color: #fff;  
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);  
+            display: none; /* Initially hide all sections */  
+        }  
+        .section.active {  
+            display: block; /* Show the active section */  
         }  
         em {  
             font-style: italic;  
             color: #6c757d;  
+        }  
+        .navigation {  
+            text-align: center;  
+            margin-top: 20px;  
+        }  
+        .nav-button {  
+            display: inline-block;  
+            padding: 10px 20px;  
+            margin: 0 10px;  
+            background-color: #007bff;  
+            color: white;  
+            border: none;  
+            border-radius: 5px;  
+            cursor: pointer;  
+            text-decoration: none;  
+        }  
+        .nav-button:hover {  
+            background-color: #0056b3;  
         }  
     </style>  
 </head>  
 <body>  
     <h1>IGI Claims Processing Systems Analysis - Requirements Gathering Document</h1>  
 
-    <div class="section">  
+    <div class="section" id="section1">  
         <h2>1. Current Systems Infrastructure</h2>  
         <h3>1.1 Existing Software Systems</h3>  
         <ul>  
@@ -88,7 +110,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section2">  
         <h2>2. Claims Processing Workflow</h2>  
         <h3>2.1 Claim Intake Process</h3>  
         <ul>  
@@ -118,7 +140,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section3">  
         <h2>3. User Roles and Access</h2>  
         <h3>3.1 Internal Users</h3>  
         <ul>  
@@ -138,7 +160,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section4">  
         <h2>4. Data Management</h2>  
         <h3>4.1 Data Storage</h3>  
         <ul>  
@@ -159,7 +181,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section5">  
         <h2>5. Reporting Requirements</h2>  
         <h3>5.1 Operational Reports</h3>  
         <ul>  
@@ -180,7 +202,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section6">  
         <h2>6. Integration Requirements</h2>  
         <h3>6.1 Internal Systems</h3>  
         <ul>  
@@ -200,7 +222,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section7">  
         <h2>7. Performance Requirements</h2>  
         <h3>7.1 System Performance</h3>  
         <ul>  
@@ -221,7 +243,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section8">  
         <h2>8. Security Requirements</h2>  
         <h3>8.1 Data Security</h3>  
         <ul>  
@@ -242,7 +264,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section9">  
         <h2>9. Hospital Interface</h2>  
         <h3>9.1 Form Processing</h3>  
         <ul>  
@@ -263,7 +285,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section10">  
         <h2>10. System Administration</h2>  
         <h3>10.1 Maintenance Requirements</h3>  
         <ul>  
@@ -284,7 +306,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section11">  
         <h2>11. Future Requirements</h2>  
         <h3>11.1 Scalability</h3>  
         <ul>  
@@ -305,7 +327,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section12">  
         <h2>12. Compliance and Regulatory</h2>  
         <h3>12.1 Healthcare Regulations</h3>  
         <ul>  
@@ -326,7 +348,7 @@
         </ul>  
     </div>  
 
-    <div class="section">  
+    <div class="section" id="section13">  
         <h2>13. Documentation Requirements</h2>  
         <h3>13.1 System Documentation</h3>  
         <ul>  
@@ -346,5 +368,53 @@
             <li>Quality control processes <em>(To maintain standards)</em></li>  
         </ul>  
     </div>  
+
+    <div class="navigation">  
+        <a href="#" class="nav-button" id="prevBtn">Previous</a>  
+        <a href="#" class="nav-button" id="nextBtn">Next</a>  
+    </div>  
+
+    <script>  
+        const sections = document.querySelectorAll('.section');  
+        const prevBtn = document.getElementById('prevBtn');  
+        const nextBtn = document.getElementById('nextBtn');  
+        let currentSection = 0;  
+
+        function showSection(index) {  
+            sections.forEach((section, i) => {  
+                section.classList.remove('active');  
+                if (i === index) {  
+                    section.classList.add('active');  
+                }  
+            });  
+        }  
+
+        function updateButtons() {  
+            prevBtn.style.display = currentSection === 0 ? 'none' : 'inline-block';  
+            nextBtn.style.display = currentSection === sections.length - 1 ? 'none' : 'inline-block';  
+        }  
+
+        prevBtn.addEventListener('click', (e) => {  
+            e.preventDefault();  
+            if (currentSection > 0) {  
+                currentSection--;  
+                showSection(currentSection);  
+                updateButtons();  
+            }  
+        });  
+
+        nextBtn.addEventListener('click', (e) => {  
+            e.preventDefault();  
+            if (currentSection < sections.length - 1) {  
+                currentSection++;  
+                showSection(currentSection);  
+                updateButtons();  
+            }  
+        });  
+
+        // Initialize  
+        showSection(currentSection);  
+        updateButtons();  
+    </script>  
 </body>  
 </html>  
