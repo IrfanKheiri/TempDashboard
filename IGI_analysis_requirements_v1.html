@@ -1,0 +1,350 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>IGI Claims Processing Systems Analysis - Requirements Gathering Document</title>  
+    <style>  
+        body {  
+            font-family: 'Arial', sans-serif;  
+            line-height: 1.6;  
+            margin: 20px;  
+            background-color: #f8f9fa;  
+            color: #343a40;  
+        }  
+        h1 {  
+            color: #007bff;  
+            border-bottom: 2px solid #007bff;  
+            padding-bottom: 10px;  
+            margin-bottom: 30px;  
+            text-align: center;  
+        }  
+        h2 {  
+            color: #28a745;  
+            margin-top: 30px;  
+            margin-bottom: 15px;  
+            border-bottom: 1px solid #28a745;  
+            padding-bottom: 5px;  
+        }  
+        h3 {  
+            color: #17a2b8;  
+            margin-top: 20px;  
+            margin-bottom: 10px;  
+        }  
+        ul {  
+            list-style-type: disc;  
+            margin-left: 30px;  
+            margin-bottom: 20px;  
+        }  
+        ul ul {  
+            list-style-type: circle;  
+            margin-left: 20px;  
+        }  
+        .section {  
+            margin-bottom: 40px;  
+            padding: 20px;  
+            border: 1px solid #dee2e6;  
+            border-radius: 8px;  
+            background-color: #fff;  
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);  
+        }  
+        em {  
+            font-style: italic;  
+            color: #6c757d;  
+        }  
+    </style>  
+</head>  
+<body>  
+    <h1>IGI Claims Processing Systems Analysis - Requirements Gathering Document</h1>  
+
+    <div class="section">  
+        <h2>1. Current Systems Infrastructure</h2>  
+        <h3>1.1 Existing Software Systems</h3>  
+        <ul>  
+            <li>Complete inventory of current claims processing software <em>(To map all existing systems and their interdependencies)</em></li>  
+            <li>Software versions and deployment dates <em>(To assess upgrade needs and compatibility issues)</em></li>  
+            <li>Current system architecture diagrams <em>(To understand system relationships and data flow)</em></li>  
+            <li>Integration points between systems <em>(To identify all connection points that need to be maintained or improved)</em></li>  
+            <li>Database management systems in use <em>(To ensure data compatibility and migration planning)</em></li>  
+            <li>Current server infrastructure details <em>(To assess hardware capabilities and limitations)</em></li>  
+        </ul>  
+
+        <h3>1.2 Document Management Systems</h3>  
+        <ul>  
+            <li>Current document storage solutions <em>(To understand existing storage capabilities and limitations)</em></li>  
+            <li>Document retrieval processes <em>(To identify inefficiencies in document access)</em></li>  
+            <li>Archival systems <em>(To ensure compliance with retention requirements)</em></li>  
+            <li>Document retention policies <em>(To maintain regulatory compliance and optimize storage)</em></li>  
+            <li>Current document classification system <em>(To improve document organization and retrieval)</em></li>  
+        </ul>  
+
+        <h3>1.3 Security Infrastructure</h3>  
+        <ul>  
+            <li>Current authentication systems <em>(To evaluate security strength and user experience)</em></li>  
+            <li>Authorization levels and user roles <em>(To maintain appropriate access control)</em></li>  
+            <li>Data encryption methods <em>(To protect sensitive health information)</em></li>  
+            <li>Compliance certifications <em>(To ensure adherence to industry standards)</em></li>  
+            <li>Audit logging systems <em>(To track system access and changes)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>2. Claims Processing Workflow</h2>  
+        <h3>2.1 Claim Intake Process</h3>  
+        <ul>  
+            <li>Current methods of receiving claims <em>(To identify all input channels and their efficiency)</em></li>  
+            <li>Volume of claims by each intake method <em>(To optimize resource allocation)</em></li>  
+            <li>Initial processing steps <em>(To identify bottlenecks in early processing)</em></li>  
+            <li>Document validation procedures <em>(To ensure accuracy from the start)</em></li>  
+            <li>Current processing time metrics <em>(To establish baseline performance metrics)</em></li>  
+        </ul>  
+
+        <h3>2.2 Claims Verification</h3>  
+        <ul>  
+            <li>Manual verification steps <em>(To identify automation opportunities)</em></li>  
+            <li>Automated verification processes <em>(To assess current automation effectiveness)</em></li>  
+            <li>Required documentation checklist <em>(To standardize verification requirements)</em></li>  
+            <li>Verification failure handling <em>(To improve error resolution processes)</em></li>  
+            <li>Duplicate claim detection methods <em>(To prevent double processing)</em></li>  
+        </ul>  
+
+        <h3>2.3 Claims Assessment</h3>  
+        <ul>  
+            <li>Assessment criteria <em>(To standardize evaluation processes)</em></li>  
+            <li>Policy verification process <em>(To ensure accurate coverage determination)</em></li>  
+            <li>Coverage determination methods <em>(To improve decision accuracy)</em></li>  
+            <li>Price calculation procedures <em>(To ensure consistent pricing)</em></li>  
+            <li>Special case handling <em>(To manage exceptions effectively)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>3. User Roles and Access</h2>  
+        <h3>3.1 Internal Users</h3>  
+        <ul>  
+            <li>Different user roles in the system <em>(To define clear access boundaries)</em></li>  
+            <li>Access level requirements <em>(To ensure appropriate permissions)</em></li>  
+            <li>Department-wise system usage <em>(To understand departmental needs)</em></li>  
+            <li>Current number of users by role <em>(To plan system capacity)</em></li>  
+            <li>Peak usage patterns <em>(To optimize system performance)</em></li>  
+        </ul>  
+
+        <h3>3.2 External Users</h3>  
+        <ul>  
+            <li>Hospital portal access requirements <em>(To ensure efficient provider interaction)</em></li>  
+            <li>Third-party integrations <em>(To maintain necessary external connections)</em></li>  
+            <li>External user authentication methods <em>(To secure external access)</em></li>  
+            <li>External user support processes <em>(To provide effective assistance)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>4. Data Management</h2>  
+        <h3>4.1 Data Storage</h3>  
+        <ul>  
+            <li>Current database structures <em>(To optimize data organization)</em></li>  
+            <li>Data backup procedures <em>(To prevent data loss)</em></li>  
+            <li>Data recovery processes <em>(To ensure business continuity)</em></li>  
+            <li>Storage capacity requirements <em>(To plan for growth)</em></li>  
+            <li>Data archival policies <em>(To manage long-term storage)</em></li>  
+        </ul>  
+
+        <h3>4.2 Data Processing</h3>  
+        <ul>  
+            <li>Current data validation rules <em>(To ensure data accuracy)</em></li>  
+            <li>Data transformation processes <em>(To standardize data formats)</em></li>  
+            <li>Data quality checks <em>(To maintain data integrity)</em></li>  
+            <li>Error handling procedures <em>(To manage data issues effectively)</em></li>  
+            <li>Data standardization methods <em>(To ensure consistent data formats)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>5. Reporting Requirements</h2>  
+        <h3>5.1 Operational Reports</h3>  
+        <ul>  
+            <li>Required daily/weekly/monthly reports <em>(To meet operational needs)</em></li>  
+            <li>Report generation process <em>(To optimize report creation)</em></li>  
+            <li>Distribution methods <em>(To ensure timely information delivery)</em></li>  
+            <li>Custom report requirements <em>(To meet specific business needs)</em></li>  
+            <li>Real-time reporting needs <em>(To enable immediate decision-making)</em></li>  
+        </ul>  
+
+        <h3>5.2 Compliance Reports</h3>  
+        <ul>  
+            <li>Regulatory reporting requirements <em>(To ensure compliance)</em></li>  
+            <li>Audit trail requirements <em>(To track system activities)</em></li>  
+            <li>Compliance checking procedures <em>(To maintain regulatory standards)</em></li>  
+            <li>Required report formats <em>(To meet submission standards)</em></li>  
+            <li>Retention requirements <em>(To comply with data retention laws)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>6. Integration Requirements</h2>  
+        <h3>6.1 Internal Systems</h3>  
+        <ul>  
+            <li>List of systems requiring integration <em>(To map integration scope)</em></li>  
+            <li>Current integration methods <em>(To assess integration efficiency)</em></li>  
+            <li>Data exchange formats <em>(To standardize data transfer)</em></li>  
+            <li>Integration frequency <em>(To optimize system performance)</em></li>  
+            <li>Error handling procedures <em>(To manage integration issues)</em></li>  
+        </ul>  
+
+        <h3>6.2 External Systems</h3>  
+        <ul>  
+            <li>Hospital systems integration <em>(To enable provider connectivity)</em></li>  
+            <li>Third-party service providers <em>(To maintain service connections)</em></li>  
+            <li>External APIs in use <em>(To document external dependencies)</em></li>  
+            <li>Integration security requirements <em>(To protect external connections)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>7. Performance Requirements</h2>  
+        <h3>7.1 System Performance</h3>  
+        <ul>  
+            <li>Expected response times <em>(To meet user expectations)</em></li>  
+            <li>Concurrent user capacity <em>(To handle peak loads)</em></li>  
+            <li>Peak load handling <em>(To maintain performance under stress)</em></li>  
+            <li>System availability requirements <em>(To ensure business continuity)</em></li>  
+            <li>Backup system requirements <em>(To prevent service interruption)</em></li>  
+        </ul>  
+
+        <h3>7.2 Processing Capacity</h3>  
+        <ul>  
+            <li>Daily transaction volume <em>(To size system capacity)</em></li>  
+            <li>Peak period statistics <em>(To plan for high-load periods)</em></li>  
+            <li>Growth projections <em>(To anticipate future needs)</em></li>  
+            <li>Processing time requirements <em>(To meet service levels)</em></li>  
+            <li>Storage capacity needs <em>(To plan infrastructure)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>8. Security Requirements</h2>  
+        <h3>8.1 Data Security</h3>  
+        <ul>  
+            <li>Data encryption requirements <em>(To secure sensitive data)</em></li>  
+            <li>Access control needs <em>(To prevent unauthorized access)</em></li>  
+            <li>Audit requirements <em>(To track data access)</em></li>  
+            <li>Compliance standards <em>(To meet regulatory requirements)</em></li>  
+            <li>Security incident handling <em>(To manage security breaches)</em></li>  
+        </ul>  
+
+        <h3>8.2 User Security</h3>  
+        <ul>  
+            <li>Authentication requirements <em>(To verify user identity)</em></li>  
+            <li>Authorization levels <em>(To control access rights)</em></li>  
+            <li>Password policies <em>(To ensure access security)</em></li>  
+            <li>Session management <em>(To protect active sessions)</em></li>  
+            <li>Multi-factor authentication needs <em>(To enhance security)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>9. Hospital Interface</h2>  
+        <h3>9.1 Form Processing</h3>  
+        <ul>  
+            <li>Types of forms received <em>(To understand document variety)</em></li>  
+            <li>Form standardization requirements <em>(To streamline processing)</em></li>  
+            <li>Form validation rules <em>(To ensure data quality)</em></li>  
+            <li>Special form handling <em>(To manage exceptions)</em></li>  
+            <li>Error correction procedures <em>(To handle form issues)</em></li>  
+        </ul>  
+
+        <h3>9.2 Hospital Communication</h3>  
+        <ul>  
+            <li>Communication methods <em>(To ensure effective information exchange)</em></li>  
+            <li>Response time requirements <em>(To meet service levels)</em></li>  
+            <li>Status update procedures <em>(To keep providers informed)</em></li>  
+            <li>Query handling process <em>(To resolve provider questions)</em></li>  
+            <li>Document exchange methods <em>(To facilitate information sharing)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>10. System Administration</h2>  
+        <h3>10.1 Maintenance Requirements</h3>  
+        <ul>  
+            <li>System update procedures <em>(To maintain system currency)</em></li>  
+            <li>Backup requirements <em>(To prevent data loss)</em></li>  
+            <li>Recovery time objectives <em>(To minimize downtime)</em></li>  
+            <li>Maintenance window requirements <em>(To schedule updates)</em></li>  
+            <li>Version control needs <em>(To manage system changes)</em></li>  
+        </ul>  
+
+        <h3>10.2 Support Requirements</h3>  
+        <ul>  
+            <li>Support level agreements <em>(To define service levels)</em></li>  
+            <li>Issue escalation procedures <em>(To handle problems effectively)</em></li>  
+            <li>Training requirements <em>(To ensure user competency)</em></li>  
+            <li>Documentation needs <em>(To maintain system knowledge)</em></li>  
+            <li>Help desk requirements <em>(To provide user support)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>11. Future Requirements</h2>  
+        <h3>11.1 Scalability</h3>  
+        <ul>  
+            <li>Growth projections <em>(To plan capacity needs)</em></li>  
+            <li>Future integration needs <em>(To anticipate connections)</em></li>  
+            <li>Technology upgrade plans <em>(To stay current)</em></li>  
+            <li>Capacity expansion needs <em>(To handle growth)</em></li>  
+            <li>Feature enhancement plans <em>(To improve functionality)</em></li>  
+        </ul>  
+
+        <h3>11.2 Innovation Requirements</h3>  
+        <ul>  
+            <li>AI/ML implementation plans <em>(To enhance automation)</em></li>  
+            <li>Automation requirements <em>(To improve efficiency)</em></li>  
+            <li>Digital transformation goals <em>(To modernize processes)</em></li>  
+            <li>Mobile access requirements <em>(To enable remote access)</em></li>  
+            <li>Customer service improvements <em>(To enhance user experience)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>12. Compliance and Regulatory</h2>  
+        <h3>12.1 Healthcare Regulations</h3>  
+        <ul>  
+            <li>Required compliance standards <em>(To ensure regulatory adherence)</em></li>  
+            <li>Data privacy requirements <em>(To protect patient information)</em></li>  
+            <li>Audit requirements <em>(To maintain compliance records)</em></li>  
+            <li>Reporting obligations <em>(To meet regulatory needs)</em></li>  
+            <li>Record keeping requirements <em>(To maintain required documentation)</em></li>  
+        </ul>  
+
+        <h3>12.2 Industry Standards</h3>  
+        <ul>  
+            <li>Insurance industry standards <em>(To follow best practices)</em></li>  
+            <li>Electronic health record standards <em>(To ensure compatibility)</em></li>  
+            <li>Security standards <em>(To protect information)</em></li>  
+            <li>Integration standards <em>(To maintain connectivity)</em></li>  
+            <li>Data exchange standards <em>(To ensure interoperability)</em></li>  
+        </ul>  
+    </div>  
+
+    <div class="section">  
+        <h2>13. Documentation Requirements</h2>  
+        <h3>13.1 System Documentation</h3>  
+        <ul>  
+            <li>Technical documentation needs <em>(To support system maintenance)</em></li>  
+            <li>User manual requirements <em>(To guide system usage)</em></li>  
+            <li>Training material needs <em>(To enable user learning)</em></li>  
+            <li>Process documentation <em>(To standardize operations)</em></li>  
+            <li>API documentation <em>(To support integrations)</em></li>  
+        </ul>  
+
+        <h3>13.2 Process Documentation</h3>  
+        <ul>  
+            <li>Workflow documentation <em>(To guide process execution)</em></li>  
+            <li>Standard operating procedures <em>(To ensure consistency)</em></li>  
+            <li>Emergency procedures <em>(To handle system issues)</em></li>  
+            <li>Change management procedures <em>(To manage updates)</em></li>  
+            <li>Quality control processes <em>(To maintain standards)</em></li>  
+        </ul>  
+    </div>  
+</body>  
+</html>  
