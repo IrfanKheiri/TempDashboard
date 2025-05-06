@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardiac Surgery Data Visualizations</title>
+    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        h3 { 
+            text-align: center; 
+            color: #34495e;
+            margin-top: 0;
+        }
+        .chart-container { 
+            margin-bottom: 30px; 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #controlsContainer {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #csvFileInput { 
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .plotly-graph-div {
+            margin: auto;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 30px;
+            height: 30px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+        #errorMessageDisplay {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid red;
+            background-color: #ffe0e0;
+            display: none; /* Hidden by default */
+        }
+        /* Safari */
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Cardiac Surgery Data Visualizations</h1>
+
+    <div id="controlsContainer">
+        <label for="csvFileInput">Upload CSV File: </label>
+        <input type="file" id="csvFileInput" accept=".csv">
+        <div id="loader" class="loader"></div>
+        <p id="processingMessage" style="display:none; color: #3498db;"></p>
+        <p id="errorMessageDisplay"></p>
+    </div>
+
+    <div id="visualizationsPlaceholder" style="display:none;">
+        <div id="chart1" class="chart-container"><h3>1. Patient Age Distribution (Characterized)</h3><div id="ageDistributionChart"></div></div>
+        <div id="chart2" class="chart-container"><h3>2. Patient Sex Distribution</h3><div id="sexDistributionChart"></div></div>
+        <div id="chart3" class="chart-container"><h3>3. Distribution of RACHS-1 Categories</h3><div id="rachsDistributionChart"></div></div>
+        <div id="chart4" class="chart-container"><h3>4. Distribution of ICU Length of Stay (DAYS)</h3><div id="icuLosDistributionChart"></div></div>
+        <div id="chart5" class="chart-container"><h3>5. In-Hospital Death Rate</h3><div id="inHospitalDeathChart"></div></div>
+        <div id="chart6" class="chart-container"><h3>6. Top 10 Most Common Primary Surgical Procedures</h3><div id="topProceduresChart"></div></div>
+        <div id="chart7" class="chart-container"><h3>7. Cardiopulmonary Bypass (CBP) Time Distribution (Minutes)</h3><div id="cbpTimeDistributionChart"></div></div>
+        <div id="chart8" class="chart-container"><h3>8. RACHS-1 Category vs. ICU Length of Stay (DAYS)</h3><div id="rachsVsIcuLosChart"></div></div>
+        <div id="chart9" class="chart-container"><h3>9. Prevalence of Previous Cardiac Surgery</h3><div id="previousSurgeryChart"></div></div>
+        <div id="chart10" class="chart-container"><h3>10. Frequency of Surgical Site Infections</h3><div id="ssiFrequencyChart"></div></div>
+    </div>
+    <div id="initialMessage" style="text-align:center; margin-top: 20px;">Please upload a CSV file to view visualizations.</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const csvFileInput = document.getElementById('csvFileInput');
+        const errorDisplay = document.getElementById('errorMessageDisplay');
+
+        if (typeof Papa === 'undefined') {
+            console.error("CRITICAL: PapaParse library (Papa) was not defined immediately after script tag. Check Network tab for loading errors of papaparse.min.js. Also check for SRI errors or JS errors within PapaParse itself.");
+            if (errorDisplay) {
+                errorDisplay.textContent = "CRITICAL ERROR: CSV Parsing library (PapaParse) failed to load. Please check your browser's Network tab AND Console in Developer Tools for errors related to 'papaparse.min.js'.";
+                errorDisplay.style.display = 'block';
+            }
+            if(csvFileInput) csvFileInput.disabled = true;
+            return; 
+        } else {
+            if (errorDisplay && errorDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                errorDisplay.textContent = "";
+                errorDisplay.style.display = 'none';
+            }
+        }
+
+        if (csvFileInput) {
+            csvFileInput.addEventListener('change', handleFileSelect, false);
+        } else {
+            console.error("Could not find the CSV file input element.");
+            if(errorDisplay) {
+                errorDisplay.textContent = "Initialization Error: File input not found.";
+                errorDisplay.style.display = 'block';
+            }
+        }
+    });
+
+    const loader = document.getElementById('loader');
+    const processingMessage = document.getElementById('processingMessage');
+    const errorMessageDisplay = document.getElementById('errorMessageDisplay');
+    const visualizationsPlaceholder = document.getElementById('visualizationsPlaceholder');
+    const initialMessage = document.getElementById('initialMessage');
+
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            if (loader) loader.style.display = 'block';
+            if (processingMessage) {
+                processingMessage.textContent = 'Processing file...';
+                processingMessage.style.display = 'block';
+            }
+            if (errorMessageDisplay) {
+                if (!errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                    errorMessageDisplay.textContent = ''; 
+                    errorMessageDisplay.style.display = 'none';
+                }
+            }
+            if (initialMessage) initialMessage.style.display = 'none';
+            if (visualizationsPlaceholder) visualizationsPlaceholder.style.display = 'none';
+            clearAllCharts();
+
+            if (typeof Papa === 'undefined') {
+                console.error("PapaParse library is not loaded at time of file selection. Papa is undefined.");
+                if (errorMessageDisplay && !errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) { 
+                    errorMessageDisplay.textContent = "Error: CSV parsing library (PapaParse) seems to have unloaded or was not available. Please refresh the page.";
+                    errorMessageDisplay.style.display = 'block';
+                }
+                if (loader) loader.style.display = 'none';
+                if (processingMessage) processingMessage.style.display = 'none';
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: false, 
+                complete: function(results) {
+                    try {
+                        processDataAndVisualize(results.data);
+                        if (processingMessage) processingMessage.textContent = 'Visualizations generated.';
+                        setTimeout(() => { if (processingMessage) processingMessage.style.display = 'none'; }, 3000);
+                        if (visualizationsPlaceholder) visualizationsPlaceholder.style.display = 'block';
+                        if (errorMessageDisplay && errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                            errorMessageDisplay.textContent = "";
+                            errorMessageDisplay.style.display = 'none';
+                        }
+                    } catch (e) {
+                        console.error("Error processing data:", e);
+                        if (errorMessageDisplay && !errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                            errorMessageDisplay.textContent = "Error processing data: " + e.message + ". Check console for details.";
+                            errorMessageDisplay.style.display = 'block';
+                        }
+                        if (processingMessage) processingMessage.style.display = 'none';
+                    } finally {
+                        if (loader) loader.style.display = 'none';
+                    }
+                },
+                error: function(error) {
+                    if (loader) loader.style.display = 'none';
+                    if (processingMessage) processingMessage.style.display = 'none';
+                    if (initialMessage) initialMessage.style.display = 'block';
+                    console.error("Error parsing CSV:", error);
+                    if (errorMessageDisplay && !errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                        errorMessageDisplay.textContent = "Error parsing CSV file: " + error.message;
+                        errorMessageDisplay.style.display = 'block';
+                    }
+                }
+            });
+        }
+    }
+
+    function parseAgeToDays(ageStrInput) {
+        if (ageStrInput === null || ageStrInput === undefined) return null;
+        const ageStr = String(ageStrInput).trim();
+        if (ageStr === "" || ageStr.toLowerCase() === "unknown" || ageStr.toLowerCase() === "n/a") return null;
+        let totalDays = 0;
+        const yearMatch = ageStr.match(/(\d+)\s*Y/i);
+        const monthMatch = ageStr.match(/(\d+)\s*M/i);
+        const dayMatch = ageStr.match(/(\d+)\s*D/i);
+        let unitsFound = false;
+        if (yearMatch) { totalDays += parseInt(yearMatch[1]) * 365.25; unitsFound = true; }
+        if (monthMatch) { totalDays += parseInt(monthMatch[1]) * (365.25 / 12); unitsFound = true; }
+        if (dayMatch) { totalDays += parseInt(dayMatch[1]); unitsFound = true; }
+        return unitsFound && totalDays >= 0 ? totalDays : null;
+    }
+
+    function getAgeCategory(totalDays) {
+        if (totalDays === null || isNaN(totalDays) || totalDays < 0) return "Unknown";
+        if (totalDays <= 28) return "Neonate (0-28 days)";
+        if (totalDays <= 365.25) return "Infant (29 days - 1 year)";
+        if (totalDays <= 3 * 365.25) return "Toddler (1-3 years)";
+        if (totalDays <= 12 * 365.25) return "Child (4-12 years)";
+        if (totalDays <= 18 * 365.25) return "Adolescent (13-18 years)";
+        return "Adult (>18 years)";
+    }
+    
+    function getSafeValue(row, columnName, defaultValue = 'Unknown') {
+        if (row && typeof row === 'object' && columnName in row) {
+            const value = row[columnName];
+            if (value !== null && value !== undefined) {
+                const strValue = String(value).trim();
+                return strValue !== "" ? strValue : defaultValue;
+            }
+        }
+        return defaultValue;
+    }
+
+    function getNumericValue(row, columnName, defaultValue = null) {
+        if (row && typeof row === 'object' && columnName in row) {
+            const value = row[columnName];
+            if (value !== null && value !== undefined && String(value).trim() !== "") {
+                const num = parseFloat(String(value).trim());
+                return isNaN(num) ? defaultValue : num;
+            }
+        }
+        return defaultValue;
+    }
+
+    function processDataAndVisualize(data) {
+        if (!data || data.length === 0) {
+            if (errorMessageDisplay && !errorMessageDisplay.textContent.startsWith("CRITICAL ERROR")) {
+                errorMessageDisplay.textContent = "No data to visualize. The CSV might be empty or improperly formatted.";
+                errorMessageDisplay.style.display = 'block';
+            }
+            return;
+        }
+        console.log("Processing data (first 5 rows):", data.slice(0,5));
+
+        // 1. Patient Age Distribution
+        const ageCategories = {
+            "Neonate (0-28 days)": 0, "Infant (29 days - 1 year)": 0, "Toddler (1-3 years)": 0,
+            "Child (4-12 years)": 0, "Adolescent (13-18 years)": 0, "Adult (>18 years)": 0, "Unknown": 0
+        };
+        data.forEach(row => {
+            const ageStr = getSafeValue(row, 'Age (Value)- round value down', null);
+            const totalDays = parseAgeToDays(ageStr);
+            const category = getAgeCategory(totalDays);
+            ageCategories[category]++;
+        });
+        Plotly.newPlot('ageDistributionChart', [{
+            x: Object.keys(ageCategories),
+            y: Object.values(ageCategories),
+            type: 'bar',
+            marker: {color: '#3498db'}
+        }], {title: 'Patient Age Distribution'}, {responsive: true});
+
+        // 2. Patient Sex Distribution
+        const sexCounts = getFrequency(data, 'Sex');
+        Plotly.newPlot('sexDistributionChart', [{
+            labels: Object.keys(sexCounts),
+            values: Object.values(sexCounts),
+            type: 'pie',
+            marker: {colors: ['#3498db', '#e74c3c', '#95a5a6', '#f1c40f']}
+        }], {title: 'Patient Sex Distribution'}, {responsive: true});
+
+        // 3. Distribution of RACHS-1 Categories
+        const rachsCounts = getFrequency(data, 'RACHS-1 Category (auto-calculated by database)');
+        Plotly.newPlot('rachsDistributionChart', [{
+            x: Object.keys(rachsCounts).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true})),
+            y: Object.keys(rachsCounts).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true})).map(k => rachsCounts[k]),
+            type: 'bar',
+            marker: {color: '#2ecc71'}
+        }], {title: 'RACHS-1 Categories'}, {responsive: true});
+
+        // 4. Distribution of ICU Length of Stay
+        const rawIcuLosValues = data.map(row => row['ICU Length of Stay (DAYS)']); // Get raw values first
+        console.log("Raw ICU LOS values (first 20):", rawIcuLosValues.slice(0,20));
+        const icuLos = data.map(row => getNumericValue(row, 'ICU Length of Stay (DAYS)')).filter(val => val !== null && !isNaN(val));
+        console.log("Processed ICU LOS values for chart (first 20):", icuLos.slice(0,20));
+        if (icuLos.length > 0) {
+            Plotly.newPlot('icuLosDistributionChart', [{
+                x: icuLos,
+                type: 'histogram',
+                marker: {color: '#e67e22'}
+            }], {title: 'ICU Length of Stay (Days)'}, {responsive: true});
+        } else {
+            document.getElementById('icuLosDistributionChart').innerHTML = '<p style="text-align:center; color: #e67e22;">No valid data available for ICU Length of Stay to display a histogram.</p>';
+            console.warn("No valid data for ICU Length of Stay histogram.");
+        }
+
+
+        // 5. In-Hospital Death Rate
+        const deathCounts = getFrequency(data, 'In-Hospital Death');
+        Plotly.newPlot('inHospitalDeathChart', [{
+            x: Object.keys(deathCounts),
+            y: Object.values(deathCounts),
+            type: 'bar',
+            marker: {color: ['#c0392b', '#27ae60', '#bdc3c7']}
+        }], {title: 'In-Hospital Death'}, {responsive: true});
+
+        // 6. Top 10 Most Common Primary Surgical Procedures
+        const procedureCounts = getFrequency(data, 'Primary Procedure (Long)');
+        const sortedProcedures = Object.entries(procedureCounts)
+            .filter(([key, value]) => key.toLowerCase() !== 'unknown' && key.toLowerCase() !== 'n/a' && key.trim() !== '')
+            .sort(([,a],[,b]) => b-a)
+            .slice(0, 10);
+        Plotly.newPlot('topProceduresChart', [{
+            y: sortedProcedures.map(p => p[0]),
+            x: sortedProcedures.map(p => p[1]),
+            type: 'bar',
+            orientation: 'h',
+            marker: {color: '#8e44ad'}
+        }], {title: 'Top 10 Primary Surgical Procedures', margin: {l: 350, t: 50, b:50}, yaxis: {automargin: true}}, {responsive: true});
+        
+        // 7. Cardiopulmonary Bypass (CBP) Time Distribution
+        const cbpTimes = data.map(row => getNumericValue(row, 'CBP Time (Minutes)')).filter(val => val !== null && !isNaN(val));
+        if (cbpTimes.length > 0) {
+            Plotly.newPlot('cbpTimeDistributionChart', [{
+                x: cbpTimes,
+                type: 'histogram',
+                marker: {color: '#1abc9c'}
+            }], {title: 'CBP Time (Minutes)'}, {responsive: true});
+        } else {
+            document.getElementById('cbpTimeDistributionChart').innerHTML = '<p style="text-align:center; color: #1abc9c;">No valid data available for CBP Time to display a histogram.</p>';
+            console.warn("No valid data for CBP Time histogram.");
+        }
+
+
+        // 8. Relationship between RACHS-1 Category and ICU Length of Stay
+        const rachsVsIcu = {};
+        data.forEach(row => {
+            const rachs = getSafeValue(row, 'RACHS-1 Category (auto-calculated by database)');
+            const icuStay = getNumericValue(row, 'ICU Length of Stay (DAYS)');
+            if (rachs !== 'Unknown' && rachs.trim() !== '' && icuStay !== null && !isNaN(icuStay)) {
+                if (!rachsVsIcu[rachs]) rachsVsIcu[rachs] = [];
+                rachsVsIcu[rachs].push(icuStay);
+            }
+        });
+        const rachsBoxData = Object.keys(rachsVsIcu).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true})).map(category => ({
+            y: rachsVsIcu[category],
+            type: 'box',
+            name: String(category)
+        }));
+         if (rachsBoxData.length > 0 && rachsBoxData.some(d => d.y && d.y.length > 0)) {
+            Plotly.newPlot('rachsVsIcuLosChart', rachsBoxData, {title: 'ICU LOS by RACHS-1 Category'}, {responsive: true});
+        } else {
+            document.getElementById('rachsVsIcuLosChart').innerHTML = '<p style="text-align:center; color: #9b59b6;">No valid data available for RACHS-1 vs ICU LOS to display box plots.</p>';
+            console.warn("No valid data for RACHS-1 vs ICU LOS box plots.");
+        }
+
+        // 9. Prevalence of Previous Cardiac Surgery
+        const prevSurgeryCounts = getFrequency(data, 'Did patient have any previous Cardiac Surgery');
+        Plotly.newPlot('previousSurgeryChart', [{
+            x: Object.keys(prevSurgeryCounts),
+            y: Object.values(prevSurgeryCounts),
+            type: 'bar',
+            marker: {color: ['#f39c12', '#2980b9', '#bdc3c7']}
+        }], {title: 'Previous Cardiac Surgery'}, {responsive: true});
+
+        // 10. Frequency of Surgical Site Infections
+        const ssiCounts = getFrequency(data, 'Surgical Site Infection');
+         Plotly.newPlot('ssiFrequencyChart', [{
+            x: Object.keys(ssiCounts),
+            y: Object.values(ssiCounts),
+            type: 'bar',
+            marker: {color: ['#d35400', '#7f8c8d', '#bdc3c7']}
+        }], {title: 'Surgical Site Infections'}, {responsive: true});
+    }
+
+    function getFrequency(data, columnName) {
+        const counts = {};
+        data.forEach(row => {
+            const value = getSafeValue(row, columnName);
+            counts[value] = (counts[value] || 0) + 1;
+        });
+        return counts;
+    }
+
+    function clearAllCharts() {
+        const chartDivIds = [
+            'ageDistributionChart', 'sexDistributionChart', 'rachsDistributionChart',
+            'icuLosDistributionChart', 'inHospitalDeathChart', 'topProceduresChart',
+            'cbpTimeDistributionChart', 'rachsVsIcuLosChart', 'previousSurgeryChart',
+            'ssiFrequencyChart'
+        ];
+        chartDivIds.forEach(id => {
+            const chartDiv = document.getElementById(id);
+            if (chartDiv) {
+                try {
+                    Plotly.purge(chartDiv);
+                } catch (e) { /* console.warn("Could not purge Plotly chart:", id, e); */ }
+                chartDiv.innerHTML = ''; // Clear previous content (like "no data" messages)
+            }
+        });
+    }
+</script>
+</body>
+</html>
