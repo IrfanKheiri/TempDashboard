@@ -29,6 +29,10 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
         #controlsContainer {
             text-align: center;
@@ -44,7 +48,7 @@
             border-radius: 4px;
         }
         .plotly-graph-div {
-            margin: 0 auto;
+            margin: 0 auto !important; /* Force override with !important */
             display: block !important;
             width: 100% !important;
             max-width: 900px;
@@ -112,6 +116,29 @@
     document.addEventListener('DOMContentLoaded', function() {
         const csvFileInput = document.getElementById('csvFileInput');
         const errorDisplay = document.getElementById('errorMessageDisplay');
+
+        // Add window resize handler to ensure charts redraw properly
+        window.addEventListener('resize', function() {
+            // Redraw all charts when window is resized
+            const chartDivIds = [
+                'ageDistributionChart', 'sexDistributionChart', 'rachsDistributionChart',
+                'icuLosDistributionChart', 'inHospitalDeathChart', 'topProceduresChart',
+                'cbpTimeDistributionChart', 'rachsVsIcuLosChart', 'previousSurgeryChart',
+                'ssiFrequencyChart'
+            ];
+            
+            chartDivIds.forEach(id => {
+                const chartDiv = document.getElementById(id);
+                if (chartDiv && chartDiv.data && chartDiv.layout) {
+                    try {
+                        Plotly.relayout(id, {
+                            autosize: true,
+                            width: null
+                        });
+                    } catch (e) { /* Ignore errors during resize */ }
+                }
+            });
+        });
 
         if (typeof Papa === 'undefined') {
             console.error("CRITICAL: PapaParse library (Papa) was not defined immediately after script tag. Check Network tab for loading errors of papaparse.min.js. Also check for SRI errors or JS errors within PapaParse itself.");
@@ -360,7 +387,9 @@
             margin: {l:80, r:80, t:50, b:80},
             xaxis: {title: 'Age Category'},
             yaxis: {title: 'Number of Patients'},
-            autosize: true
+            autosize: true,
+            width: null, // Let Plotly calculate width based on container
+            height: 450  // Fixed height for consistency
         }, {responsive: true});
 
         // 2. Patient Sex Distribution
