@@ -44,9 +44,10 @@
             border-radius: 4px;
         }
         .plotly-graph-div {
-            margin: auto;
+            margin: 0 auto;
             display: block !important;
             width: 100% !important;
+            max-width: 900px;
         }
         .loader {
             border: 5px solid #f3f3f3;
@@ -354,7 +355,13 @@
             y: Object.values(ageCategories),
             type: 'bar',
             marker: {color: '#3498db'}
-        }], {title: 'Patient Age Distribution', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+        }], {
+            title: 'Patient Age Distribution', 
+            margin: {l:80, r:80, t:50, b:80},
+            xaxis: {title: 'Age Category'},
+            yaxis: {title: 'Number of Patients'},
+            autosize: true
+        }, {responsive: true});
 
         // 2. Patient Sex Distribution
         const sexCounts = getFrequency(data, 'Sex');
@@ -362,8 +369,14 @@
             labels: Object.keys(sexCounts),
             values: Object.values(sexCounts),
             type: 'pie',
-            marker: {colors: ['#3498db', '#e74c3c', '#95a5a6', '#f1c40f']}
-        }], {title: 'Patient Sex Distribution', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+            marker: {colors: ['#3498db', '#e74c3c', '#95a5a6', '#f1c40f']},
+            textinfo: 'label+percent',
+            textposition: 'inside'
+        }], {
+            title: 'Patient Sex Distribution', 
+            margin: {l:80, r:80, t:50, b:50},
+            autosize: true
+        }, {responsive: true});
 
         // 3. Distribution of RACHS-1 Categories
         const rachsCounts = getFrequency(data, 'RACHS-1 Category (auto-calculated by database)');
@@ -372,7 +385,13 @@
             y: Object.keys(rachsCounts).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true})).map(k => rachsCounts[k]),
             type: 'bar',
             marker: {color: '#2ecc71'}
-        }], {title: 'RACHS-1 Categories', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+        }], {
+            title: 'RACHS-1 Categories', 
+            margin: {l:80, r:80, t:50, b:80},
+            xaxis: {title: 'RACHS-1 Category'},
+            yaxis: {title: 'Number of Patients'},
+            autosize: true
+        }, {responsive: true});
 
         // 4. Distribution of ICU Length of Stay
         const rawIcuLosValues = data.map(row => row['ICU Length of Stay (DAYS)']); // Get raw values first
@@ -384,7 +403,13 @@
                 x: icuLos,
                 type: 'histogram',
                 marker: {color: '#e67e22'}
-            }], {title: 'ICU Length of Stay (Days)', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+            }], {
+                title: 'ICU Length of Stay (Days)', 
+                margin: {l:80, r:80, t:50, b:80},
+                xaxis: {title: 'Length of Stay (Days)'},
+                yaxis: {title: 'Frequency'},
+                autosize: true
+            }, {responsive: true});
         } else {
             document.getElementById('icuLosDistributionChart').innerHTML = '<p style="text-align:center; color: #e67e22;">No valid data available for ICU Length of Stay to display a histogram.</p>';
             console.warn("No valid data for ICU Length of Stay histogram.");
@@ -398,7 +423,13 @@
             y: Object.values(deathCounts),
             type: 'bar',
             marker: {color: ['#c0392b', '#27ae60', '#bdc3c7']}
-        }], {title: 'In-Hospital Death', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+        }], {
+            title: 'In-Hospital Death', 
+            margin: {l:80, r:80, t:50, b:80},
+            xaxis: {title: 'Outcome'},
+            yaxis: {title: 'Number of Patients'},
+            autosize: true
+        }, {responsive: true});
 
         // 6. Top 10 Most Common Primary Surgical Procedures
         const procedureCounts = getFrequency(data, 'Primary Procedure (Long)');
@@ -412,7 +443,13 @@
             type: 'bar',
             orientation: 'h',
             marker: {color: '#8e44ad'}
-        }], {title: 'Top 10 Primary Surgical Procedures', margin: {l: 350, r:50, t: 50, b:50}, yaxis: {automargin: true}}, {responsive: true});
+        }], {
+            title: 'Top 10 Primary Surgical Procedures', 
+            margin: {l: 350, r:80, t: 50, b:80}, 
+            xaxis: {title: 'Number of Procedures'},
+            yaxis: {title: 'Procedure Type', automargin: true},
+            autosize: true
+        }, {responsive: true});
         
         // 7. Cardiopulmonary Bypass (CBP) Time Distribution
         const cbpTimes = data.map(row => getNumericValue(row, 'CBP Time (Minutes)')).filter(val => val !== null && !isNaN(val));
@@ -421,7 +458,13 @@
                 x: cbpTimes,
                 type: 'histogram',
                 marker: {color: '#1abc9c'}
-            }], {title: 'CBP Time (Minutes)', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+            }], {
+                title: 'CBP Time (Minutes)', 
+                margin: {l:80, r:80, t:50, b:80},
+                xaxis: {title: 'Time (Minutes)'},
+                yaxis: {title: 'Frequency'},
+                autosize: true
+            }, {responsive: true});
         } else {
             document.getElementById('cbpTimeDistributionChart').innerHTML = '<p style="text-align:center; color: #1abc9c;">No valid data available for CBP Time to display a histogram.</p>';
             console.warn("No valid data for CBP Time histogram.");
@@ -444,7 +487,13 @@
             name: String(category)
         }));
          if (rachsBoxData.length > 0 && rachsBoxData.some(d => d.y && d.y.length > 0)) {
-            Plotly.newPlot('rachsVsIcuLosChart', rachsBoxData, {title: 'ICU LOS by RACHS-1 Category', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+            Plotly.newPlot('rachsVsIcuLosChart', rachsBoxData, {
+                title: 'ICU LOS by RACHS-1 Category', 
+                margin: {l:80, r:80, t:50, b:80},
+                xaxis: {title: 'RACHS-1 Category'},
+                yaxis: {title: 'ICU Length of Stay (Days)'},
+                autosize: true
+            }, {responsive: true});
         } else {
             document.getElementById('rachsVsIcuLosChart').innerHTML = '<p style="text-align:center; color: #9b59b6;">No valid data available for RACHS-1 vs ICU LOS to display box plots.</p>';
             console.warn("No valid data for RACHS-1 vs ICU LOS box plots.");
@@ -457,7 +506,13 @@
             y: Object.values(prevSurgeryCounts),
             type: 'bar',
             marker: {color: ['#f39c12', '#2980b9', '#bdc3c7']}
-        }], {title: 'Previous Cardiac Surgery', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+        }], {
+            title: 'Previous Cardiac Surgery', 
+            margin: {l:80, r:80, t:50, b:80},
+            xaxis: {title: 'Previous Surgery Status'},
+            yaxis: {title: 'Number of Patients'},
+            autosize: true
+        }, {responsive: true});
 
         // 10. Frequency of Surgical Site Infections
         const ssiCounts = getFrequency(data, 'Surgical Site Infection');
@@ -466,7 +521,13 @@
             y: Object.values(ssiCounts),
             type: 'bar',
             marker: {color: ['#d35400', '#7f8c8d', '#bdc3c7']}
-        }], {title: 'Surgical Site Infections', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
+        }], {
+            title: 'Surgical Site Infections', 
+            margin: {l:80, r:80, t:50, b:80},
+            xaxis: {title: 'Infection Status'},
+            yaxis: {title: 'Number of Patients'},
+            autosize: true
+        }, {responsive: true});
     }
 
     function getFrequency(data, columnName) {
