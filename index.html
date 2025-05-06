@@ -45,6 +45,8 @@
         }
         .plotly-graph-div {
             margin: auto;
+            display: block !important;
+            width: 100% !important;
         }
         .loader {
             border: 5px solid #f3f3f3;
@@ -82,7 +84,8 @@
     <h1>Cardiac Surgery Data Visualizations</h1>
 
     <div id="controlsContainer">
-        <label for="csvFileInput">Upload CSV File: </label>
+        <p>Default file <strong>surgery.csv</strong> is loaded automatically.</p>
+        <label for="csvFileInput">Upload a different CSV File: </label>
         <input type="file" id="csvFileInput" accept=".csv">
         <div id="loader" class="loader"></div>
         <p id="processingMessage" style="display:none; color: #3498db;"></p>
@@ -101,7 +104,7 @@
         <div id="chart9" class="chart-container"><h3>9. Prevalence of Previous Cardiac Surgery</h3><div id="previousSurgeryChart"></div></div>
         <div id="chart10" class="chart-container"><h3>10. Frequency of Surgical Site Infections</h3><div id="ssiFrequencyChart"></div></div>
     </div>
-    <div id="initialMessage" style="text-align:center; margin-top: 20px;">Please upload a CSV file to view visualizations.</div>
+    <div id="initialMessage" style="text-align:center; margin-top: 20px;">Loading default data file...</div>
 
 
 <script>
@@ -133,6 +136,9 @@
                 errorDisplay.style.display = 'block';
             }
         }
+        
+        // Automatically load the default CSV file
+        loadDefaultCSV();
     });
 
     const loader = document.getElementById('loader');
@@ -140,6 +146,72 @@
     const errorMessageDisplay = document.getElementById('errorMessageDisplay');
     const visualizationsPlaceholder = document.getElementById('visualizationsPlaceholder');
     const initialMessage = document.getElementById('initialMessage');
+    
+    function loadDefaultCSV() {
+        const defaultCSVFile = './surgery.csv';
+        if (loader) loader.style.display = 'block';
+        if (processingMessage) {
+            processingMessage.textContent = 'Loading default data file...';
+            processingMessage.style.display = 'block';
+        }
+        if (initialMessage) initialMessage.style.display = 'none';
+        
+        fetch(defaultCSVFile)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${defaultCSVFile}: ${response.status} ${response.statusText}`);
+                }
+                return response.text();
+            })
+            .then(csvData => {
+                if (typeof Papa === 'undefined') {
+                    throw new Error("PapaParse library is not loaded");
+                }
+                
+                Papa.parse(csvData, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: false,
+                    complete: function(results) {
+                        try {
+                            processDataAndVisualize(results.data);
+                            if (processingMessage) processingMessage.textContent = 'Visualizations generated.';
+                            setTimeout(() => { if (processingMessage) processingMessage.style.display = 'none'; }, 3000);
+                            if (visualizationsPlaceholder) visualizationsPlaceholder.style.display = 'block';
+                        } catch (e) {
+                            console.error("Error processing data:", e);
+                            if (errorMessageDisplay) {
+                                errorMessageDisplay.textContent = "Error processing data: " + e.message + ". Check console for details.";
+                                errorMessageDisplay.style.display = 'block';
+                            }
+                            if (processingMessage) processingMessage.style.display = 'none';
+                        } finally {
+                            if (loader) loader.style.display = 'none';
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error parsing CSV:", error);
+                        if (errorMessageDisplay) {
+                            errorMessageDisplay.textContent = "Error parsing CSV file: " + error.message;
+                            errorMessageDisplay.style.display = 'block';
+                        }
+                        if (loader) loader.style.display = 'none';
+                        if (processingMessage) processingMessage.style.display = 'none';
+                        if (initialMessage) initialMessage.style.display = 'block';
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error loading default CSV file:", error);
+                if (errorMessageDisplay) {
+                    errorMessageDisplay.textContent = "Error loading default CSV file: " + error.message + ". You can try uploading it manually.";
+                    errorMessageDisplay.style.display = 'block';
+                }
+                if (loader) loader.style.display = 'none';
+                if (processingMessage) processingMessage.style.display = 'none';
+                if (initialMessage) initialMessage.style.display = 'block';
+            });
+    }
 
     function handleFileSelect(event) {
         const file = event.target.files[0];
@@ -282,7 +354,7 @@
             y: Object.values(ageCategories),
             type: 'bar',
             marker: {color: '#3498db'}
-        }], {title: 'Patient Age Distribution'}, {responsive: true});
+        }], {title: 'Patient Age Distribution', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
 
         // 2. Patient Sex Distribution
         const sexCounts = getFrequency(data, 'Sex');
@@ -291,7 +363,7 @@
             values: Object.values(sexCounts),
             type: 'pie',
             marker: {colors: ['#3498db', '#e74c3c', '#95a5a6', '#f1c40f']}
-        }], {title: 'Patient Sex Distribution'}, {responsive: true});
+        }], {title: 'Patient Sex Distribution', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
 
         // 3. Distribution of RACHS-1 Categories
         const rachsCounts = getFrequency(data, 'RACHS-1 Category (auto-calculated by database)');
@@ -300,7 +372,7 @@
             y: Object.keys(rachsCounts).sort((a,b) => String(a).localeCompare(String(b), undefined, {numeric: true})).map(k => rachsCounts[k]),
             type: 'bar',
             marker: {color: '#2ecc71'}
-        }], {title: 'RACHS-1 Categories'}, {responsive: true});
+        }], {title: 'RACHS-1 Categories', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
 
         // 4. Distribution of ICU Length of Stay
         const rawIcuLosValues = data.map(row => row['ICU Length of Stay (DAYS)']); // Get raw values first
@@ -312,7 +384,7 @@
                 x: icuLos,
                 type: 'histogram',
                 marker: {color: '#e67e22'}
-            }], {title: 'ICU Length of Stay (Days)'}, {responsive: true});
+            }], {title: 'ICU Length of Stay (Days)', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
         } else {
             document.getElementById('icuLosDistributionChart').innerHTML = '<p style="text-align:center; color: #e67e22;">No valid data available for ICU Length of Stay to display a histogram.</p>';
             console.warn("No valid data for ICU Length of Stay histogram.");
@@ -326,7 +398,7 @@
             y: Object.values(deathCounts),
             type: 'bar',
             marker: {color: ['#c0392b', '#27ae60', '#bdc3c7']}
-        }], {title: 'In-Hospital Death'}, {responsive: true});
+        }], {title: 'In-Hospital Death', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
 
         // 6. Top 10 Most Common Primary Surgical Procedures
         const procedureCounts = getFrequency(data, 'Primary Procedure (Long)');
@@ -340,7 +412,7 @@
             type: 'bar',
             orientation: 'h',
             marker: {color: '#8e44ad'}
-        }], {title: 'Top 10 Primary Surgical Procedures', margin: {l: 350, t: 50, b:50}, yaxis: {automargin: true}}, {responsive: true});
+        }], {title: 'Top 10 Primary Surgical Procedures', margin: {l: 350, r:50, t: 50, b:50}, yaxis: {automargin: true}}, {responsive: true});
         
         // 7. Cardiopulmonary Bypass (CBP) Time Distribution
         const cbpTimes = data.map(row => getNumericValue(row, 'CBP Time (Minutes)')).filter(val => val !== null && !isNaN(val));
@@ -349,7 +421,7 @@
                 x: cbpTimes,
                 type: 'histogram',
                 marker: {color: '#1abc9c'}
-            }], {title: 'CBP Time (Minutes)'}, {responsive: true});
+            }], {title: 'CBP Time (Minutes)', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
         } else {
             document.getElementById('cbpTimeDistributionChart').innerHTML = '<p style="text-align:center; color: #1abc9c;">No valid data available for CBP Time to display a histogram.</p>';
             console.warn("No valid data for CBP Time histogram.");
@@ -372,7 +444,7 @@
             name: String(category)
         }));
          if (rachsBoxData.length > 0 && rachsBoxData.some(d => d.y && d.y.length > 0)) {
-            Plotly.newPlot('rachsVsIcuLosChart', rachsBoxData, {title: 'ICU LOS by RACHS-1 Category'}, {responsive: true});
+            Plotly.newPlot('rachsVsIcuLosChart', rachsBoxData, {title: 'ICU LOS by RACHS-1 Category', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
         } else {
             document.getElementById('rachsVsIcuLosChart').innerHTML = '<p style="text-align:center; color: #9b59b6;">No valid data available for RACHS-1 vs ICU LOS to display box plots.</p>';
             console.warn("No valid data for RACHS-1 vs ICU LOS box plots.");
@@ -385,7 +457,7 @@
             y: Object.values(prevSurgeryCounts),
             type: 'bar',
             marker: {color: ['#f39c12', '#2980b9', '#bdc3c7']}
-        }], {title: 'Previous Cardiac Surgery'}, {responsive: true});
+        }], {title: 'Previous Cardiac Surgery', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
 
         // 10. Frequency of Surgical Site Infections
         const ssiCounts = getFrequency(data, 'Surgical Site Infection');
@@ -394,7 +466,7 @@
             y: Object.values(ssiCounts),
             type: 'bar',
             marker: {color: ['#d35400', '#7f8c8d', '#bdc3c7']}
-        }], {title: 'Surgical Site Infections'}, {responsive: true});
+        }], {title: 'Surgical Site Infections', margin: {l:50, r:50, t:50, b:50}}, {responsive: true});
     }
 
     function getFrequency(data, columnName) {
